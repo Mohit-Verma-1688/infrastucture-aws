@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: mohit-verma-1688/ssh-agent@git-repo-mapping # this action will configure git to use the right SSH key per each repository. 
+      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
         with:
          ssh-private-key: |
           ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
@@ -49,7 +49,3 @@ jobs:
       - name: Terraform Plan
         working-directory: dev/
         run: terragrunt run-all plan
-
-      - name: Terraform Apply
-        working-directory: dev/
-        run: terragrunt run-all apply
