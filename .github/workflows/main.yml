@@ -19,7 +19,7 @@ jobs:
          ssh-private-key: |
           ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
          repo-mappings: |
-          git@github.com:Mohit-Verma-1688/infrastucture-modules.git
+          github.com:Mohit-Verma-1688/infrastucture-modules.git
       - name: Checkout
         uses: actions/checkout@v2
         with:
