@@ -7,6 +7,10 @@ on:
   pull_request:
     branches:
       - main
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.STAGING_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: us-east-1
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -39,7 +43,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with: 
-         terraform_wrapper: false
+         terraform_wrapper: true
 
       - name: Terragrunt Init
         working-directory: dev/
