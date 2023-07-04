@@ -11,8 +11,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: mohit-verma-1688/ssh-agent@git-repo-mapping # this action will configure git to use the right SSH key per each repository. 
+        with:
+         ssh-private-key: |
+          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
+         repo-mappings: |
+          git@github.com:Mohit-Verma-1688/infrastucture-modules.git
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          submodules: recursive # this is important not to forget
+          
       - name: Install terragrunt on ubuntu
         run: |
           curl -Ls https://github.com/gruntwork-io/terragrunt/releases/download/v0.48.0/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt
