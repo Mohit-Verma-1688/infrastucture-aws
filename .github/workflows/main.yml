@@ -13,7 +13,7 @@ env:
   AWS_REGION: us-east-1
   tf_version: 'latest'
   tg_version: 'latest'
-  tf_working_dir: 'dev'
+  tf_working_dir: './dev'
 jobs:
   build:
     runs-on: ubuntu-latest
