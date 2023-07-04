@@ -13,7 +13,7 @@ env:
   AWS_REGION: us-east-1
   tf_version: 'latest'
   tg_version: 'latest'
-  tf_working_dir: '.'
+  tf_working_dir: 'dev'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -65,6 +65,16 @@ jobs:
           tg_actions_version: ${{ env.tg_version }}
           tf_actions_binary: 'terraform'
           tf_actions_subcommand: 'init'
+          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: true
+          
+      - uses: the-commons-project/terragrunt-github-actions@master
+        name: Terragrunt init
+        with: 
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_binary: 'terraform'
+          tf_actions_subcommand: 'validate'
           tf_actions_working_dir: ${{ env.tf_working_dir }}
           tf_actions_comment: true
                
