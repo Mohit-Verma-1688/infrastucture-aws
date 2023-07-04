@@ -10,8 +10,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
-      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
+      - uses: shaunco/ssh-agent@git-repo-mapping # this action will configure git to use the right SSH key per each repository. 
         with:
          ssh-private-key: |
           ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
@@ -38,7 +41,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with: 
-         terraform_wrapper: true
+         terraform_wrapper: false
 
       - name: Terragrunt Init
         working-directory: dev/
