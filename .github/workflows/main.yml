@@ -56,7 +56,7 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
         with: 
-         terraform_wrapper: true
+         terraform_wrapper: false
          
       - name: Interact with Terragrunt
         run: terragrunt --version
