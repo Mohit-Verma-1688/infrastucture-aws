@@ -45,6 +45,7 @@ jobs:
           role-session-name: devlab
           aws-region: us-east-1
           role-skip-session-tagging: true
+          role-duration-seconds: 1200
           
       - name: Setup Terragrunt
         uses: autero1/action-terragrunt@v1.1.0
