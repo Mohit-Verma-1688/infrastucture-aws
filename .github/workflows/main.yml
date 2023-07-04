@@ -44,6 +44,7 @@ jobs:
           role-to-assume: arn:aws:iam::833192599359:role/terraform
           role-session-name: devlab
           aws-region: us-east-1
+          role-skip-session-tagging: true
           
       - name: Setup Terragrunt
         uses: autero1/action-terragrunt@v1.1.0
