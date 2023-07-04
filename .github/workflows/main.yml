@@ -59,6 +59,10 @@ jobs:
       - name: Interact with Terragrunt
         run: terragrunt --version
         
+      - name: checking for the credentials
+        run: |
+         echo $AWS_SECRET_ACCESS_KEY
+        
       - name: run terragrunt init
         run: terragrunt run-all init --terragrunt-non-interactive
         env:
@@ -100,7 +104,7 @@ jobs:
         
 #      - name: Terraform Format
 #        working-directory: dev/
-#        run: terragrunt run-all fmt --terragrunt-non-interactive3
+#        run: terragrunt run-all fmt --terragrunt-non-interactive
 #
 #      - name: Terraform Plan
 #        working-directory: dev/
