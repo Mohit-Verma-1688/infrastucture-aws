@@ -90,6 +90,7 @@ jobs:
 #          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
           GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
           GITHUB_REPOSITORY_OWNER: mohit-verma-1688
+          GITHUB_REPOSITORY: mohit-verma-1688/infrastucture-modules
           
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt validate
