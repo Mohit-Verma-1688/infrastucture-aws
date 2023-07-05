@@ -39,13 +39,13 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          #aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          #aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          role-to-assume: arn:aws:iam::833192599359:role/terraform
-          role-session-name: devlab
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          #role-to-assume: arn:aws:iam::833192599359:role/terraform
+          #role-session-name: devlab
           aws-region: us-east-1
-          role-skip-session-tagging: true
-          role-duration-seconds: 1200
+          #role-skip-session-tagging: true
+          #role-duration-seconds: 1200
           
 #      - name: Setup Terragrunt
 #        uses: autero1/action-terragrunt@v1.1.0
