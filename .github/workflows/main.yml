@@ -8,9 +8,9 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
   AWS_REGION: us-east-1
-#  tf_version: 'latest'
-#  tg_version: 'latest'
-#  tf_working_dir: './dev'
+  tf_version: 'latest'
+  tg_version: 'latest'
+  tf_working_dir: './dev'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,10 +44,10 @@ jobs:
           #role-skip-session-tagging: true
           #role-duration-seconds: 1200
           
-      - name: Setup Terragrunt
-        uses: autero1/action-terragrunt@v1.1.0
-        with:
-          terragrunt_version: 0.48.0
+#      - name: Setup Terragrunt
+#        uses: autero1/action-terragrunt@v1.1.0
+#        with:
+#          terragrunt_version: 0.48.0
         
           
 #      - name: Setup Terraform
@@ -55,40 +55,36 @@ jobs:
 #        with: 
 #         terraform_wrapper: false
          
-      - name: Interact with Terragrunt
-        run: terragrunt --version
-        
-      - name: export secrets
-        run: | 
-          export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
-          export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#      - name: Interact with Terragrunt
+#        run: terragrunt --version
+
         
 #      - name: checking for the credentials
 #        run: |
 #         echo $AWS_SECRET_ACCESS_KEY
         
-      - name: run terragrunt init
-        env:
-         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-         GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
-        run: terragrunt run-all init --terragrunt-non-interactive          
-
-          
-#      - uses: the-commons-project/terragrunt-github-actions@master
-#       name: Terragrunt init
-#       with: 
-#          tf_actions_version: ${{ env.tf_version }}
-#          tg_actions_version: ${{ env.tg_version }}
-#          tf_actions_binary: 'terragrunt run-all'
-#          tf_actions_subcommand: 'init'
-#          tf_actions_working_dir: ${{ env.tf_working_dir }}
-#          tf_actions_comment: false
+#      - name: run terragrunt init
 #        env:
-#          AWS_DEFAULT_REGION: "us-east-1"
-#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
-#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-#          GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
+#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
+#        run: terragrunt run-all init --terragrunt-non-interactive          
+     
+          
+      - uses: the-commons-project/terragrunt-github-actions@master
+        name: Terragrunt init
+        with: 
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_binary: 'terragrunt run-all'
+          tf_actions_subcommand: 'init'
+#          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: false
+        env:
+          AWS_DEFAULT_REGION: "us-east-1"
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
           
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt validate
