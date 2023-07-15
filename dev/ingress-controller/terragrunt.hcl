@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//aws-lb-controller?ref=aws-lbc-v0.0.1"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=ingress-controller-v0.0.2"
 }
 
 include "root" {
@@ -12,22 +12,28 @@ include "env" {
   merge_strategy = "no_merge"
 }
 
+
 inputs = {
   env      = include.env.locals.env
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_aws-lbc      = false
-  aws-lbc_helm_verion = "1.4.4"
+  enable_ingress-controller      = true
+  ingress-controller_helm_verion = "4.0.1"
 }
 
 dependency "eks" {
   config_path = "../eks"
-
+ 
   mock_outputs = {
     eks_name            = "demo"
     openid_provider_arn = "arn:aws:iam::123456789012:oidc-provider"
   }
+}
+
+dependency "cert-manager" {
+  config_path = "../cert-manager"
+  skip_outputs = true
 }
 
 generate "helm_provider" {
