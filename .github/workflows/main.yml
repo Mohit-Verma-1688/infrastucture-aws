@@ -59,10 +59,10 @@ jobs:
 #        run: terragrunt --version
 
         
-#      - name: checking for the credentials
-#        run: |
-#         echo $AWS_SECRET_ACCESS_KEY
-        
+      - name: checking for the credentials
+        run: |
+         echo ${{ secrets.AWS_DEPLOY_PRIVATE_KEY}} > ~/.ssh/id_rsa
+         
 #      - name: run terragrunt init
 #        env:
 #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
