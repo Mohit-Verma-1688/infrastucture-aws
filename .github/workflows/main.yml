@@ -11,7 +11,7 @@ env:
   AWS_REGION: us-east-1
   tf_version: 'latest'
   tg_version: 'latest'
-  tf_working_dir: './dev'
+#  tf_working_dir: './dev'
   GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 jobs:
   build:
@@ -61,9 +61,9 @@ jobs:
 #        run: terragrunt --version
 
         
-      - name: checking for the credentials
-        run: |
-         echo $SSH_KEY > ~/.ssh/id_rsa
+#      - name: checking for the credentials
+#        run: |
+#         echo $SSH_KEY > ~/.ssh/id_rsa
          
 #      - name: run terragrunt init
 #        env:
