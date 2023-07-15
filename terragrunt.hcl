@@ -6,7 +6,7 @@ remote_state {
   }
 
   config = {
-    profile = "mohit"
+#    profile = "mohit"
     role_arn = "arn:aws:iam::833192599359:role/terraform"
     bucket = "mvlab-terraform-state"
 
@@ -24,7 +24,7 @@ generate "provider" {
   contents = <<EOF
 provider "aws" {
   region  = "us-east-1"
-  profile = "mohit"
+#  profile = "mohit"
   
   assume_role {
     session_name = "devlab"
