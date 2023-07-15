@@ -85,7 +85,7 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
-          GITHUB_TOKEN: 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
+          GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }
           GITHUB_REPOSITORY_OWNER: mohit-verma-1688
           
           
