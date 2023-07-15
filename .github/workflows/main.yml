@@ -4,8 +4,8 @@ on:
  workflow_dispatch:
  
 env:
-#  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
 #  GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
 #  SSH_KEY: ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
 #  AWS_REGION: us-east-1
