@@ -38,8 +38,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
           #role-to-assume: arn:aws:iam::833192599359:role/terraform
           #role-session-name: devlab
           aws-region: us-east-1
@@ -82,10 +82,10 @@ jobs:
           tf_actions_subcommand: 'init'
 #          tf_actions_working_dir: ${{ env.tf_working_dir }}
           tf_actions_comment: false
-        env:
-          AWS_DEFAULT_REGION: "us-east-1"
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+#       env:
+#          AWS_DEFAULT_REGION: "us-east-1"
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID}}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
 #          GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
           
           
