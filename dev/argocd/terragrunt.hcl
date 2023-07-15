@@ -31,6 +31,11 @@ dependency "eks" {
   }
 }
 
+dependency "ingress-controller" {
+  config_path = "../ingress-controller"
+  skip_outputs = true
+}
+
 generate "helm_provider" {
   path      = "helm-provider.tf"
   if_exists = "overwrite_terragrunt"
