@@ -2,7 +2,7 @@ name: AWS-EKS-DEPLOY
 
 on:
  workflow_dispatch:
- inputs:
+  inputs:
       environment:
         type: choice
         description: Select an environment to continue
