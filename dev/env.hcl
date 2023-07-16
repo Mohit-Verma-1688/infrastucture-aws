@@ -1,5 +1,3 @@
 locals {
-    env = "dev"
-    
+    env = "dev"   
 }
-
