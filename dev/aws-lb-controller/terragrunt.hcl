@@ -17,7 +17,7 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_aws-lbc      = false
+  enable_aws-lbc      = include.env.locals.aws-lb-controller
   aws-lbc_helm_verion = "1.4.4"
 }
 

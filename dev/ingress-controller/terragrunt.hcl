@@ -18,7 +18,7 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_ingress-controller      = true
+  enable_ingress-controller      = include.env.locals.ingress-controller
   ingress-controller_helm_verion = "4.0.1"
 }
 

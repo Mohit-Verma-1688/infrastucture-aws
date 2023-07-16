@@ -18,7 +18,7 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_argocd      = true
+  enable_argocd      = include.env.locals.argocd
   argocd_helm_verion = "5.37.1"
 }
 

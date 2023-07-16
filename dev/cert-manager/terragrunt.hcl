@@ -17,7 +17,7 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_cert-manager      = true
+  enable_cert-manager      = include.env.locals.cert-manager
   cert-manager_helm_verion = "v1.12.0"
 }
 
