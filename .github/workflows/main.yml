@@ -76,6 +76,17 @@ jobs:
           tf_actions_comment: false
           args: --terragrunt-working-dir ${{ github.event.inputs.environment }}
           
+      - uses: the-commons-project/terragrunt-github-actions@master
+        name: Terragrunt apply
+        with: 
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_binary: 'terragrunt run-all'
+          tf_actions_subcommand: 'apply'
+#          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: false
+          args: --terragrunt-working-dir ${{ github.event.inputs.environment }}
+          
           
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt validate
