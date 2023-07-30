@@ -1,0 +1,96 @@
+name: AWS-EKS-DESTROY
+
+on:
+ workflow_dispatch:
+  inputs:
+      environment:
+        type: choice
+        description: Select an environment to continue
+        options: 
+        - dev
+        - staging  
+ 
+env:
+#  AWS_ACCESS_KEY_ID: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+#  AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+#  GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
+#  SSH_KEY: ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
+#  AWS_REGION: us-east-1
+  tf_version: 'latest'
+  tg_version: 'latest'
+#  tf_working_dir: './dev'
+  GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./dev
+    steps:
+      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
+        with:
+         ssh-private-key: |
+          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive # this is important not to forget
+          
+#      - name: Install terragrunt on ubuntu
+#        run: |
+#          curl -Ls https://github.com/gruntwork-io/terragrunt/releases/download/v0.48.0/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt
+#          chmod a+x /usr/local/bin/terragrunt
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+#          role-to-assume: arn:aws:iam::833192599359:role/terraform
+#          role-session-name: devlab
+          aws-region: us-east-1
+          #role-skip-session-tagging: true
+          #role-duration-seconds: 1200
+                   
+          
+      - uses: the-commons-project/terragrunt-github-actions@master
+        name: Terragrunt Destroy
+        with: 
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_binary: 'terragrunt run-all'
+          tf_actions_subcommand: 'destroy'
+#          tf_actions_working_dir: ${{ env.tf_working_dir }}
+          tf_actions_comment: false
+          args: --terragrunt-working-dir ${{ github.event.inputs.environment }} --terragrunt-non-interactive
+          
+          
+#      - uses: the-commons-project/terragrunt-github-actions@master
+#        name: Terragrunt validate
+#        with: 
+#          tf_actions_version: ${{ env.tf_version }}
+#          tg_actions_version: ${{ env.tg_version }}
+#          tf_actions_binary: 'terragrunt'
+#          tf_actions_subcommand: 'validate'
+#          tf_actions_working_dir: ${{ env.tf_working_dir }}
+#          tf_actions_comment: true
+          
+#     - uses: the-commons-project/terragrunt-github-actions@master
+#        name: Terragrunt plan
+#        with: 
+#          tf_actions_version: ${{ env.tf_version }}
+#          tg_actions_version: ${{ env.tg_version }}
+#          tf_actions_binary: 'terragrunt'
+#          tf_actions_subcommand: 'plan'
+#          tf_actions_working_dir: ${{ env.tf_working_dir }}
+#          tf_actions_comment: true
+               
+        
+#      - name: Terraform Format
+#        working-directory: dev/
+#        run: terragrunt run-all fmt --terragrunt-non-interactive
+#
+#      - name: Terraform Plan
+#        working-directory: dev/
+#        run: terragrunt run-all plan --terragrunt-non-interactive
