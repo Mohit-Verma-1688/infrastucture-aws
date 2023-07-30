@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd?ref=argocd-v0.0.8"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd?ref=argocd-v0.0.18"
 }
 
 include "root" {
@@ -19,7 +19,9 @@ inputs = {
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
   enable_argocd      = include.env.locals.argocd
-  argocd_helm_verion = "5.37.1"
+  argocd_helm_verion = "5.42.0"
+  aws_ssm_key_name = "argocd-terraform-key"
+  private_git_repo = "git@github.com:Mohit-Verma-1688/applications.git"
 }
 
 dependency "eks" {
@@ -58,3 +60,25 @@ provider "helm" {
 }
 EOF
 }
+
+generate "kubernetes_provider" {
+  path      = "k8s-provider.tf"
+  if_exists = "overwrite_terragrunt"
+  contents  = <<EOF
+
+data "aws_eks_cluster" "eks1" {
+    name = var.eks_name
+}
+
+data "aws_eks_cluster_auth" "eks1" {
+    name = var.eks_name
+}
+
+provider "kubernetes" {
+    host                   = data.aws_eks_cluster.eks1.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks1.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.eks1.token
+}
+EOF
+}
+

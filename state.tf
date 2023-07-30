@@ -5,7 +5,6 @@ terraform {
     dynamodb_table = "terraform-lock-table"
     encrypt        = true
     key            = "./terraform.tfstate"
-    profile        = "mohit"
     region         = "us-east-1"
     role_arn       = "arn:aws:iam::833192599359:role/terraform"
   }

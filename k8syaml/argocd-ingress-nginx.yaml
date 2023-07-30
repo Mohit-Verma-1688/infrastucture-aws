@@ -9,18 +9,18 @@ metadata:
     namespace: argocd
 spec:
     rules:
-    - host: argocd.themulticlouding.com
+    - host: dev-argocd.themulticlouding.com
       http:
         paths:
         - path: /
           pathType: Prefix
           backend:
             service:
-              name: argocd-eks-server
+              name: dev-argocd-server
               port:
                 name: https
     ingressClassName: "external-nginx"
     tls:
     - hosts:
-      - argocd.themulticlouding.com
+      - dev-argocd.themulticlouding.com
       secretName: argocd-secret
