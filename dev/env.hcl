@@ -5,6 +5,6 @@ locals {
     cert-manager = "true"   
     ingress-controller = "true"
     aws-lb-controller = "false"
-    argocd = "true"
-    k8syaml = "true"
+    argocd = "false"
+    k8syaml = "false"
 }
