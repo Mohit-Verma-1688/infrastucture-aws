@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd?ref=argocd-v0.1.0"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.1"
 }
 
 include "root" {
@@ -18,10 +18,8 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_argocd      = include.env.locals.argocd
-  argocd_helm_verion = "5.42.0"
-  aws_ssm_key_name = "argocd-terraform-key"
-  private_git_repo = "git@github.com:Mohit-Verma-1688/applications.git"
+  enable_kube-prometheus-stack      = include.env.locals.kube-prometheus-stack
+  kube-prometheus-stack_helm_version = "48.2.2"
 }
 
 dependency "eks" {
@@ -33,8 +31,8 @@ dependency "eks" {
   }
 }
 
-dependency "ingress-controller" {
-  config_path = "../ingress-controller"
+dependency "argocd" {
+  config_path = "../argocd"
   skip_outputs = true
 }
 
@@ -60,25 +58,3 @@ provider "helm" {
 }
 EOF
 }
-
-generate "kubernetes_provider" {
-  path      = "k8s-provider.tf"
-  if_exists = "overwrite_terragrunt"
-  contents  = <<EOF
-
-data "aws_eks_cluster" "eks1" {
-    name = var.eks_name
-}
-
-data "aws_eks_cluster_auth" "eks1" {
-    name = var.eks_name
-}
-
-provider "kubernetes" {
-    host                   = data.aws_eks_cluster.eks1.endpoint
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks1.certificate_authority[0].data)
-    token                  = data.aws_eks_cluster_auth.eks1.token
-}
-EOF
-}
-
