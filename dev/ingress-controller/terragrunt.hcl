@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=ingress-controller-v0.0.2"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=ingress-controller-v0.0.3"
 }
 
 include "root" {
@@ -33,6 +33,11 @@ dependency "eks" {
 
 dependency "cert-manager" {
   config_path = "../cert-manager"
+  skip_outputs = true
+}
+
+dependency "cert-manager-issuers" {
+  config_path = "../cert-manager-issuers"
   skip_outputs = true
 }
 
