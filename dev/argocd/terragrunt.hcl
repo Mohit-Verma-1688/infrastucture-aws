@@ -24,6 +24,16 @@ inputs = {
   private_git_repo = "git@github.com:Mohit-Verma-1688/applications.git"
 }
 
+dependency "eks" {
+  config_path = "../eks"
+
+  mock_outputs = {
+    eks_name            = "demo"
+    openid_provider_arn = "arn:aws:iam::123456789012:oidc-provider"
+  }
+}
+
+
 dependency "ingress-controller" {
   config_path = "../ingress-controller"
   skip_outputs = true

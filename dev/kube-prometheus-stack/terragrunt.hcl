@@ -22,6 +22,14 @@ inputs = {
   kube-prometheus-stack_helm_version = "48.2.2"
 }
 
+dependency "eks" {
+  config_path = "../eks"
+
+  mock_outputs = {
+    eks_name            = "demo"
+    openid_provider_arn = "arn:aws:iam::123456789012:oidc-provider"
+  }
+}
 
 dependency "argocd" {
   config_path = "../argocd"
