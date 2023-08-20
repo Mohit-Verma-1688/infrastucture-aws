@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.13"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.14"
 }
 
 include "root" {
