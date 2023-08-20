@@ -31,10 +31,6 @@ dependency "eks" {
   }
 }
 
-dependency "cert-manager" {
-  config_path = "../cert-manager"
-  skip_outputs = true
-}
 
 dependency "cert-manager-issuers" {
   config_path = "../cert-manager-issuers"
