@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager?ref=cert-manager-v0.0.5"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager?ref=cert-manager-v0.0.9"
 }
 
 include "root" {

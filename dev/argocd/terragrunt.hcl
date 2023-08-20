@@ -34,8 +34,8 @@ dependency "eks" {
 }
 
 
-dependency "ingress-controller" {
-  config_path = "../ingress-controller"
+dependency "external-dns" {
+  config_path = "../external-dns"
   skip_outputs = true
 }
 

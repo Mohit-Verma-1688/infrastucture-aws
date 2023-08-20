@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=external-dns-v0.0.2"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=external-dns-v0.0.10"
 }
 
 include "root" {
@@ -28,6 +28,11 @@ dependency "eks" {
     eks_name            = "demo"
     openid_provider_arn = "arn:aws:iam::123456789012:oidc-provider"
   }
+}
+
+dependency "ingress-controller" {
+  config_path = "../ingress-controller"
+  skip_outputs = true
 }
 
 generate "helm_provider" {
