@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=external-dns-v0.0.10"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=external-dns-v0.0.11"
 }
 
 include "root" {
