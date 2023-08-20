@@ -7,5 +7,5 @@ locals {
     ingress-controller = "true"
     aws-lb-controller = "false"
     argocd = "true"
-    kube-prometheus-stack = "true"
+    kube-prometheus-stack = "false"
 }
