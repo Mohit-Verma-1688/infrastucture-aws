@@ -17,7 +17,7 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_aws-eks-addon      = include.env.locals.aws-eks-addon
+  enable_aws-eks-addon = include.env.locals.aws-eks-addon
   aws-ebs-csi_version = "v1.11.4-eksbuild.1"
 }
 
