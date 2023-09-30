@@ -9,6 +9,6 @@ locals {
     ingress-controller = "true"
     aws-lb-controller = "true"
     argocd = "true"
-    kube-prometheus-stack = "false"
+    kube-prometheus-stack = "true"
     argocd-imageupdater = "false"
 }

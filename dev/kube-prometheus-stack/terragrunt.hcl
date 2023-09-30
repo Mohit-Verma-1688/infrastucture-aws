@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.14"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.17"
 }
 
 include "root" {
@@ -20,6 +20,7 @@ inputs = {
 
   enable_kube-prometheus-stack      = include.env.locals.kube-prometheus-stack
   kube-prometheus-stack_helm_version = "48.2.2"
+  enable_defaultdashboard = false
 }
 
 dependency "eks" {
