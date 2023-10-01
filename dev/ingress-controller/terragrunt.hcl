@@ -1,5 +1,5 @@
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=ingress-controller-v0.0.3"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=ingress-controller-v0.0.4"
 }
 
 include "root" {
