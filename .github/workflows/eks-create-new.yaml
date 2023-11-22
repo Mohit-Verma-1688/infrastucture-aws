@@ -54,7 +54,7 @@ jobs:
           tf_actions_binary: 'terragrunt run-all'
           tf_actions_subcommand: 'init'
           tf_actions_comment: false
-          
+          args: --terragrunt-working-dir ${{ env.tf_working_dir }}          
       - uses: the-commons-project/terragrunt-github-actions@master
         name: Terragrunt validate
         with: 
@@ -63,7 +63,8 @@ jobs:
           tf_actions_binary: 'terragrunt run-all'
           tf_actions_subcommand: 'validate'
           tf_actions_comment: false
-          
+          args: --terragrunt-working-dir ${{ env.tf_working_dir }} 
+
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt apply
 #        with: 
