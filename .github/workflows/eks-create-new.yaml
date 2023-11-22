@@ -25,7 +25,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./dev
+        working-directory: ./
     environment: dev
     name: 'Deploy to dev'
     runs-on: ubuntu-latest
