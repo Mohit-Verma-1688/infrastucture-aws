@@ -18,23 +18,22 @@ on:
 env:
   tf_version: 'latest'
   tg_version: 'latest'
-  GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
+  tf_working_dir: './dev'
+  GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 jobs:
-  deploy-eks-infra:
+  deploy_dev:
+    environment: dev
+    name: 'Deploy to dev'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./dev
     steps:
-      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
-        with:
-         ssh-private-key: |
-          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY}}
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive # this is important not to forget
+#      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
+#        with:
+#         ssh-private-key: |
+#          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV}}
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#        with:
+#          submodules: recursive # this is important not to forget
           
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -51,7 +50,7 @@ jobs:
           tf_actions_binary: 'terragrunt run-all'
           tf_actions_subcommand: 'init'
           tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ github.event.inputs.environment }}
+          args: --terragrunt-working-dir ${{ env.tf_working_dir }}
           
       - uses: the-commons-project/terragrunt-github-actions@master
         name: Terragrunt validate
@@ -61,7 +60,7 @@ jobs:
           tf_actions_binary: 'terragrunt run-all'
           tf_actions_subcommand: 'validate'
           tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ github.event.inputs.environment }}
+          args: --terragrunt-working-dir ${{ env.tf_working_dir }}
           
       - uses: the-commons-project/terragrunt-github-actions@master
         name: Terragrunt apply
@@ -71,6 +70,6 @@ jobs:
           tf_actions_binary: 'terragrunt run-all'
           tf_actions_subcommand: 'apply'
           tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ github.event.inputs.environment }} --terragrunt-non-interactive
+          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
           
           
