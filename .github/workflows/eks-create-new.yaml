@@ -22,10 +22,13 @@ env:
   GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 jobs:
   deploy_dev:
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./dev
     environment: dev
     name: 'Deploy to dev'
     runs-on: ubuntu-latest
-    working-directory: ./dev
     steps:
 #      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
 #        with:

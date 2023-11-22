@@ -1,7 +1,7 @@
 locals {
     env = "dev"
 
-# make false for i the component not to deploy
+#i  make false for i the component not to deploy
     aws-eks-addon = "false"
     cert-manager = "false" 
     cert-manager-issuers = "false"
