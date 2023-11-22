@@ -25,6 +25,7 @@ jobs:
     environment: dev
     name: 'Deploy to dev'
     runs-on: ubuntu-latest
+    working-directory: ./dev
     steps:
 #      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
 #        with:
@@ -62,14 +63,14 @@ jobs:
           tf_actions_comment: false
           args: --terragrunt-working-dir ${{ env.tf_working_dir }}
           
-      - uses: the-commons-project/terragrunt-github-actions@master
-        name: Terragrunt apply
-        with: 
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_binary: 'terragrunt run-all'
-          tf_actions_subcommand: 'apply'
-          tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
+#      - uses: the-commons-project/terragrunt-github-actions@master
+#        name: Terragrunt apply
+#        with: 
+#          tf_actions_version: ${{ env.tf_version }}
+#          tg_actions_version: ${{ env.tg_version }}
+#          tf_actions_binary: 'terragrunt run-all'
+#          tf_actions_subcommand: 'apply'
+#          tf_actions_comment: false
+#          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
           
           
