@@ -1,6 +1,11 @@
 name: AWS-EKS-DEPLOY
 
 on:
+ pull_request:
+    branches:
+      - main
+    paths:
+      - 'dev/**'
  push:
     branches:
       - 'main'
@@ -22,10 +27,6 @@ env:
   GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 jobs:
   deploy_dev:
-    defaults:
-      run:
-        shell: bash
-  
     environment: dev
     name: 'Deploy to dev'
     runs-on: ubuntu-latest
