@@ -2,13 +2,13 @@ locals {
     env = "dev"
 
 # make false for the component not to deploy
-    aws-eks-addon = "true"
-    cert-manager = "true" 
-    cert-manager-issuers = "true"
-    external-dns = "true" 
-    ingress-controller = "true"
-    aws-lb-controller = "true"
-    argocd = "true"
-    kube-prometheus-stack = "true"
+    aws-eks-addon = "false"
+    cert-manager = "false" 
+    cert-manager-issuers = "false"
+    external-dns = "false" 
+    ingress-controller = "false"
+    aws-lb-controller = "false"
+    argocd = "false"
+    kube-prometheus-stack = "false"
     argocd-imageupdater = "false"
 }
