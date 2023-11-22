@@ -1,7 +1,10 @@
 locals {
     env = "dev"
 
-#  imake false for i the component not to deploy
+#  make false for the component not to deploy. Other values are controlled by pipeline at runtime.
+   
+# VPC paramaeters, VPC is ON by default. 
+    azs           = "["us-east-1a", "us-east-1b"]"   
     aws-eks-addon = "false"
     cert-manager = "false" 
     cert-manager-issuers = "false"
