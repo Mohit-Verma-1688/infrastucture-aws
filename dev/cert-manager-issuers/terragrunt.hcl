@@ -1,17 +1,20 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=cert-manager-issuers-v0.0.5"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=cert-manager-issuers-v0.0.5"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=${include.env.locals.cert-manager-issuers-module}"
+}
 
 inputs = {
   env      = include.env.locals.env
@@ -19,7 +22,7 @@ inputs = {
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
   enable_cert-manager-issuers      = include.env.locals.cert-manager-issuers
-  cert-manager-issuers_helm_version = "0.2.5"
+  cert-manager-issuers_helm_version = include.env.locals.cert-manager-issuers_helm_version 
 }
 
 dependency "eks" {

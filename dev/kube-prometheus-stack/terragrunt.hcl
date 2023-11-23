@@ -1,15 +1,19 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.20"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.20"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
+}
+
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=${include.env.locals.kube-prometheus-stack-module}"
 }
 
 
@@ -19,7 +23,7 @@ inputs = {
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
   enable_kube-prometheus-stack      = include.env.locals.kube-prometheus-stack
-  kube-prometheus-stack_helm_version = "48.2.2"
+  kube-prometheus-stack_helm_version = include.env.locals.kube-prometheus-stack_helm_version
   enable_defaultdashboard = false
 }
 

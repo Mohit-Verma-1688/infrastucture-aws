@@ -1,15 +1,19 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.20"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=kube-prometheus-stack-v0.0.20"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/prod.hcl"
   expose         = true
   merge_strategy = "no_merge"
+}
+
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=${include.env.locals.kube-prometheus-stack-module}"
 }
 
 

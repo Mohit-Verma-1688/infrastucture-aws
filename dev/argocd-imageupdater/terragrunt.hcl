@@ -1,17 +1,20 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd-imageupdater?ref=argocd-imageupdater-v0.0.2"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd-imageupdater?ref=argocd-imageupdater-v0.0.2"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd-imageupdater?ref=${include.env.locals.argocd-imageupdater-module}"
+}
 
 inputs = {
   env      = include.env.locals.env
@@ -19,7 +22,7 @@ inputs = {
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
   enable_argocd-imageup      = include.env.locals.argocd-imageupdater
-  argocd-imageup_helm_verion = "0.8.4"
+  argocd-imageup_helm_verion = include.env.locals.argocd-imageup_helm_verion
 }
 
 dependency "eks" {

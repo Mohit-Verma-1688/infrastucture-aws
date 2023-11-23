@@ -1,15 +1,19 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//aws-eks-addons?ref=aws-eks-addons-v0.0.3"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//aws-eks-addons?ref=aws-eks-addons-v0.0.3"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
+}
+
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//aws-eks-addons?ref=${include.env.locals.aws-eks-addons-module}"
 }
 
 inputs = {
@@ -18,7 +22,7 @@ inputs = {
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
   enable_aws-eks-addon = include.env.locals.aws-eks-addon
-  aws-ebs-csi_version = "v1.18.0-eksbuild.1"
+  aws-ebs-csi_version = include.env.locals.aws-ebs-csi_version
 }
 
 dependency "eks" {

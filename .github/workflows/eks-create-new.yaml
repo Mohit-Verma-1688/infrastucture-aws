@@ -10,7 +10,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'dev/**'
+      - 'dev-/**'
  workflow_dispatch:
   inputs:
       environment:
@@ -46,9 +46,17 @@ jobs:
           aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+         with:
+         filters: |
+          common:
+              - '_env/dev.hcl'
                           
       - uses: the-commons-project/terragrunt-github-actions@master
         name: Terragrunt init
+        if: ${{ steps.filter.outputs.common == 'true' }}
         with: 
           tf_actions_version: ${{ env.tf_version }}
           tg_actions_version: ${{ env.tg_version }}
@@ -58,6 +66,7 @@ jobs:
           args: --terragrunt-working-dir ${{ env.tf_working_dir }}          
       - uses: the-commons-project/terragrunt-github-actions@master
         name: Terragrunt validate
+        if: ${{ steps.filter.outputs.common == 'true' }}
         with: 
           tf_actions_version: ${{ env.tf_version }}
           tg_actions_version: ${{ env.tg_version }}

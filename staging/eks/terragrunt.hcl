@@ -1,15 +1,19 @@
-terraform {
-  source = "git@github.com:Mohit-Verma-1688/infrastucture-modules.git//eks?ref=eks-v0.0.1"
-}
+#terraform {
+#  source = "git@github.com:Mohit-Verma-1688/infrastucture-modules.git//eks?ref=eks-v0.0.2"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/stage.hcl"
   expose         = true
   merge_strategy = "no_merge"
+}
+
+terraform {
+  source = "git@github.com:Mohit-Verma-1688/infrastucture-modules.git//eks?ref=${include.env.locals.eks-module}"
 }
 
 inputs = {

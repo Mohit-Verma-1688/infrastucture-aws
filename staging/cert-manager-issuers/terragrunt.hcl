@@ -1,17 +1,20 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=cert-manager-issuers-v0.0.5"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=cert-manager-issuers-v0.0.5"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/stage.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=${include.env.locals.cert-manager-issuers-module}"
+}
 
 inputs = {
   env      = include.env.locals.env

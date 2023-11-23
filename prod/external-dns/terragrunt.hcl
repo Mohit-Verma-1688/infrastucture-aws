@@ -1,15 +1,19 @@
-terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=external-dns-v0.0.11"
-}
+#terraform {
+#  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=external-dns-v0.0.11"
+#}
 
 include "root" {
   path = find_in_parent_folders()
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/prod.hcl"
   expose         = true
   merge_strategy = "no_merge"
+}
+
+terraform {
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=${include.env.locals.external-dns-module}"
 }
 
 inputs = {
@@ -20,6 +24,7 @@ inputs = {
   enable_external-dns      = include.env.locals.external-dns
   external-dns_helm_version = "6.23.3"
 }
+
 
 dependency "eks" {
   config_path = "../eks"
