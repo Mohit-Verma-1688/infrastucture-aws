@@ -51,7 +51,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
-      if: ${{ steps.changes.outputs.dev == 'true' }}
+      if: ${{ steps.changes.outputs.dev == 'false' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -90,7 +90,8 @@ jobs:
     - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
       with:
         ssh-private-key: |
-          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV}}
+          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_STAGE}}
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -126,7 +127,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
-      if: ${{ steps.changes.outputs.stage == 'true' }}
+      if: ${{ steps.changes.outputs.stage == 'false' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
