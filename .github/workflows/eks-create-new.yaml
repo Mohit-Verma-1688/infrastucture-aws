@@ -25,6 +25,7 @@ env:
   tg_version: 'latest'
   tf_working_dir: './dev'
   GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
+
 jobs:
   deploy_dev:
     environment: dev
@@ -63,7 +64,8 @@ jobs:
           tf_actions_binary: 'terragrunt run-all'
           tf_actions_subcommand: 'init'
           tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ env.tf_working_dir }}          
+          args: --terragrunt-working-dir ${{ env.tf_working_dir }}         
+ 
       - uses: the-commons-project/terragrunt-github-actions@master
         name: Terragrunt validate
         if: ${{ steps.filter.outputs.common == 'true' }}
