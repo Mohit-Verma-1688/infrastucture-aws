@@ -30,6 +30,7 @@ jobs:
       with:
         ssh-private-key: |
           ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV}}
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
@@ -82,7 +83,7 @@ jobs:
   #          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
 
   deploy_stage:
-    environment: stage
+    environment: staging
     name: 'Deploy to stage'
     needs: deploy_dev
     runs-on: ubuntu-latest
