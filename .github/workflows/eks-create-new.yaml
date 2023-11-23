@@ -71,17 +71,17 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
 
-#      - uses: the-commons-project/terragrunt-github-actions@master
-#        name: Terragrunt apply
-#        with: 
-#          tf_actions_version: ${{ env.tf_version }}
-#          tg_actions_version: ${{ env.tg_version }}
-#          tf_actions_binary: 'terragrunt run-all'
-#          tf_actions_subcommand: 'apply'
-#          tf_actions_comment: false
-#          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
+  #      - uses: the-commons-project/terragrunt-github-actions@master
+  #        name: Terragrunt apply
+  #        with: 
+  #          tf_actions_version: ${{ env.tf_version }}
+  #          tg_actions_version: ${{ env.tg_version }}
+  #          tf_actions_binary: 'terragrunt run-all'
+  #          tf_actions_subcommand: 'apply'
+  #          tf_actions_comment: false
+  #          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
 
-   deploy_stage:
+  deploy_stage:
     environment: stage
     name: 'Deploy to stage'
     needs: deploy_dev
@@ -103,19 +103,19 @@ jobs:
         sed -i 's/"dev"/"stage"/g' stage.hcl
 
     - name: Commit the changes made
-      run: | 
+      run: |
         git config --global user.name 'mohit-verma-1688'
         git config --global user.email 'mohitverma160288@gmail.com'
         git commit -am "update to the env file from the workflow"
         git push
-       
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-    
+
 
     - uses: dorny/paths-filter@v2
       id: changes
