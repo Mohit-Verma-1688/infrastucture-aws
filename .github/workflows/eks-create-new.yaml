@@ -52,30 +52,34 @@ jobs:
       id: changes
       with:
         filters: |
-          common:
+          vpc:
               - '_env/dev.hcl'
+              - 'dev/vpc/**'
+          eks:
+              - '_env/dev.hcl'
+              - 'dev/eks/**'
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
-      if: ${{ steps.changes.outputs.common == 'true' }}
+      if: ${{ steps.changes.outputs.eks == 'true' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'init'
         tf_actions_comment: false
-        args: --terragrunt-working-dir ${{ env.tf_working_dir }}
+        args: --terragrunt-working-dir ./dev/eks
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: ${{ steps.changes.outputs.common == 'true' }}
+      if: ${{ steps.changes.outputs.vpc == 'true' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'validate'
         tf_actions_comment: false
-        args: --terragrunt-working-dir ${{ env.tf_working_dir }}
+        args: --terragrunt-working-dir ./dev/vpc
 
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt apply

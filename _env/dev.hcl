@@ -1,7 +1,7 @@
 locals {
     env = "dev"
 
-#  make false for the component not to deploy during bootstraping. 
+# i  make false for the component not to deploy during bootstraping. 
     
     aws-eks-addon = "false"
     cert-manager = "false" 
