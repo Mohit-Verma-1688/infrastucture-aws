@@ -1,25 +1,25 @@
 name: AWS-EKS-DEPLOY
 
 on:
- pull_request:
+  pull_request:
     branches:
-      - main
+    - main
     paths:
-      - 'dev/**'
- push:
+    - 'dev/**'
+  push:
     branches:
-      - 'main'
+    - 'main'
     paths:
-      - 'dev-/**'
- workflow_dispatch:
-  inputs:
+    - 'dev-/**'
+  workflow_dispatch:
+    inputs:
       environment:
         type: choice
         description: Select an environment to continue
-        options: 
+        options:
         - dev
-        - staging  
- 
+        - staging
+
 env:
   tf_version: 'latest'
   tg_version: 'latest'
@@ -32,50 +32,50 @@ jobs:
     name: 'Deploy to dev'
     runs-on: ubuntu-latest
     steps:
-      - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
-        with:
-         ssh-private-key: |
+    - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
+      with:
+        ssh-private-key: |
           ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV}}
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive # this is important not to forget
-          
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive # this is important not to forget
 
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-         filters: |
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
           common:
               - '_env/dev.hcl'
-                          
-      - uses: the-commons-project/terragrunt-github-actions@master
-        name: Terragrunt init
-        if: ${{ steps.filter.outputs.common == 'true' }}
-        with: 
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_binary: 'terragrunt run-all'
-          tf_actions_subcommand: 'init'
-          tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ env.tf_working_dir }}         
- 
-      - uses: the-commons-project/terragrunt-github-actions@master
-        name: Terragrunt validate
-        if: ${{ steps.filter.outputs.common == 'true' }}
-        with: 
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_binary: 'terragrunt run-all'
-          tf_actions_subcommand: 'validate'
-          tf_actions_comment: false
-          args: --terragrunt-working-dir ${{ env.tf_working_dir }} 
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt init
+      if: ${{ steps.changes.outputs.common == 'true' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'init'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir ${{ env.tf_working_dir }}
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt validate
+      if: ${{ steps.changes.outputs.common == 'true' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'validate'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir ${{ env.tf_working_dir }}
 
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt apply
@@ -86,5 +86,5 @@ jobs:
 #          tf_actions_subcommand: 'apply'
 #          tf_actions_comment: false
 #          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
-          
-          
+
+

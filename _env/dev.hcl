@@ -1,5 +1,5 @@
 locals {
-    env = "dev1"
+    env = "dev"
 
 #  make false for the component not to deploy during bootstraping. 
     
