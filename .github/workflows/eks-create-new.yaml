@@ -50,7 +50,7 @@ jobs:
 
       - uses: dorny/paths-filter@v2
         id: changes
-         with:
+        with:
          filters: |
           common:
               - '_env/dev.hcl'
