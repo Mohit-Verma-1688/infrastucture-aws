@@ -85,7 +85,7 @@ jobs:
   deploy_stage:
     environment: staging
     env:
-      GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
+      GIT_SSH_COMMAND: "echo '${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_STAGE }}' > id_rsa  && ssh-keyscan github.com > known_hosts && chmod 600 id_rsa known_hosts  && ssh -i ./id_rsa -o UserKnownHostsFile=./known_hosts"
 
     name: 'Deploy to stage'
     needs: deploy_dev
