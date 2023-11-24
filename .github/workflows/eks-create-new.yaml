@@ -26,10 +26,6 @@ jobs:
     name: 'Deploy to dev'
     runs-on: ubuntu-latest
     steps:
-    #  - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
-    #    with:
-    #      ssh-private-key: |
-    #        ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_DEV}}
 
     - name: Checkout
       uses: actions/checkout@v3
@@ -47,9 +43,8 @@ jobs:
       id: changes
       with:
         filters: |
-          dev:
-              - '_env/dev.hcl'
-
+          stage:
+            - '_env/dev.hcl'
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
       if: ${{ steps.changes.outputs.dev == 'false' }}
@@ -91,12 +86,6 @@ jobs:
     needs: deploy_dev
     runs-on: ubuntu-latest
     steps:
-    - uses: webfactory/ssh-agent@v0.7.0 # this action will configure git to use the right SSH key per each repository. 
-      with:
-        ssh-private-key: |
-          ${{ secrets.INFRASTRUCTURE_MODULES_PRIVATEKEY_STAGE}}
-
-
 
     - name: Checkout
       uses: actions/checkout@v3
