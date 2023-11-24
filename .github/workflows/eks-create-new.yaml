@@ -113,7 +113,7 @@ jobs:
       run: |
         git config --global user.name 'mohit-verma-1688'
         git config --global user.email 'mohitverma160288@gmail.com'
-        git commit -am "update to the env file from the workflow"
+        git diff --exit-code || git commit -am "update to the env file from the workflow"
         git push || echo "Nothing to commit"
 
     - name: Configure AWS credentials
