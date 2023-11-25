@@ -6,14 +6,21 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "dev" {
   path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
+
 terraform {
-  source = "git@github.com:Mohit-Verma-1688/infrastucture-modules.git//eks?ref=${include.env.locals.eks-module}"
+  source = "git@github.com:Mohit-Verma-1688/infrastucture-modules.git//eks?ref=${include.dev.locals.eks-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {

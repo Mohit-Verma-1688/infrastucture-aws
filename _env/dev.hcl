@@ -1,5 +1,4 @@
 locals {
-    env = "dev"
 
 # hell again  again ichanging file for testing again .
 #  make false for the component not to deploy during bootstraping. 
@@ -38,10 +37,6 @@ locals {
     ingress-controller_helm_verion = "4.0.1"
     kube-prometheus-stack_helm_version = "48.2.2"
 
-
-
-
-    
 
 
 }

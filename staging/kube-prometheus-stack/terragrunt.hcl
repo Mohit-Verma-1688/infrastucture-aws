@@ -6,14 +6,20 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "stage" {
   path           = "${get_terragrunt_dir()}/../../_env/stage.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=${include.env.locals.kube-prometheus-stack-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//kube-prometheus-stack?ref=${include.stage.locals.kube-prometheus-stack-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 
@@ -22,8 +28,8 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_kube-prometheus-stack      = include.env.locals.kube-prometheus-stack
-  kube-prometheus-stack_helm_version = "48.2.2"
+  enable_kube-prometheus-stack      = include.stage.locals.kube-prometheus-stack
+  kube-prometheus-stack_helm_version = include.stage.locals.kube-prometheus-stack_helm_version
   enable_defaultdashboard = false
 }
 

@@ -6,14 +6,20 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "prod" {
   path           = "${get_terragrunt_dir()}/../../_env/prod.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd-imageupdater?ref=${include.env.locals.argocd-imageupdater-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd-imageupdater?ref=${include.prod.locals.argocd-imageupdater-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {
@@ -21,8 +27,8 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_argocd-imageup      = include.env.locals.argocd-imageupdater
-  argocd-imageup_helm_verion = "0.8.4"
+  enable_argocd-imageup      = include.prod.locals.argocd-imageupdater
+  argocd-imageup_helm_verion = include.prod.locals.argocd-imageup_helm_verion
 }
 
 dependency "eks" {

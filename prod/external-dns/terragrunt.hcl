@@ -6,23 +6,30 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "prod" {
   path           = "${get_terragrunt_dir()}/../../_env/prod.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=${include.env.locals.external-dns-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//external-dns?ref=${include.prod.locals.external-dns-module}"
 }
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
+}
+
 
 inputs = {
   env      = include.env.locals.env
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_external-dns      = include.env.locals.external-dns
-  external-dns_helm_version = "6.23.3"
+  enable_external-dns      = include.prod.locals.external-dns
+  external-dns_helm_version = include.prod.locals.external-dns_helm_version
 }
 
 

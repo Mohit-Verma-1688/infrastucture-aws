@@ -128,13 +128,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Get changed files
-      id: changed-files
+    - name: Get changed files in the docs folder
+      id: changed-files-specific
       uses: tj-actions/changed-files@v40
       with:
-        files: |
-          src:
-           - '_env/stage.hcl'
+        files: _env/stage.hcl # Alternatively using: `docs/**`
+        files_ignore: _env/dev.hcl
 
         # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 

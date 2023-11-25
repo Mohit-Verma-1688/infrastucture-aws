@@ -6,24 +6,29 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "prod" {
   path           = "${get_terragrunt_dir()}/../../_env/prod.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=${include.env.locals.ingress-controller-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//ingress-nginx?ref=${include.prod.locals.ingress-controller-module}"
 }
 
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
+}
 
 inputs = {
   env      = include.env.locals.env
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_ingress-controller      = include.env.locals.ingress-controller
-  ingress-controller_helm_verion = "4.0.1"
+  enable_ingress-controller      = include.prod.locals.ingress-controller
+  ingress-controller_helm_verion = include.prod.locals.ingress-controller_helm_verion
 }
 
 dependency "eks" {

@@ -8,14 +8,20 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "prod" {
   path           = "${get_terragrunt_dir()}/../../_env/prod.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//vpc?ref=${include.env.locals.vpc-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//vpc?ref=${include.prod.locals.vpc-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {

@@ -6,14 +6,20 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "stage" {
   path           = "${get_terragrunt_dir()}/../../_env/stage.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=${include.env.locals.cert-manager-issuers-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//cert-manager-issuers?ref=${include.stage.locals.cert-manager-issuers-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {
@@ -21,8 +27,8 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_cert-manager-issuers      = include.env.locals.cert-manager-issuers
-  cert-manager-issuers_helm_version = "0.2.5"
+  enable_cert-manager-issuers      = include.stage.locals.cert-manager-issuers
+  cert-manager-issuers_helm_version = include.stage.locals.cert-manager-issuers_helm_version 
 }
 
 dependency "eks" {

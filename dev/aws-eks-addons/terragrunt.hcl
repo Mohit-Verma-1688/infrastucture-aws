@@ -6,14 +6,20 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "dev" {
   path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//aws-eks-addons?ref=${include.env.locals.aws-eks-addons-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//aws-eks-addons?ref=${include.dev.locals.aws-eks-addons-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {
@@ -21,8 +27,8 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_aws-eks-addon = include.env.locals.aws-eks-addon
-  aws-ebs-csi_version = include.env.locals.aws-ebs-csi_version
+  enable_aws-eks-addon = include.dev.locals.aws-eks-addon
+  aws-ebs-csi_version = include.dev.locals.aws-ebs-csi_version
 }
 
 dependency "eks" {

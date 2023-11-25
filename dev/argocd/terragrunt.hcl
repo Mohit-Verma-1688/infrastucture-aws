@@ -6,14 +6,20 @@ include "root" {
   path = find_in_parent_folders()
 }
 
-include "env" {
+include "dev" {
   path           = "${get_terragrunt_dir()}/../../_env/dev.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
 terraform {
-  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd?ref=${include.env.locals.argocd-module}"
+  source = "git::git@github.com:Mohit-Verma-1688/infrastucture-modules.git//argocd?ref=${include.dev.locals.argocd-module}"
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
 }
 
 inputs = {
@@ -21,8 +27,8 @@ inputs = {
   eks_name = dependency.eks.outputs.eks_name
   openid_provider_arn = dependency.eks.outputs.openid_provider_arn
 
-  enable_argocd      = include.env.locals.argocd
-  argocd_helm_verion = include.env.locals.argocd_helm_verion
+  enable_argocd      = include.dev.locals.argocd
+  argocd_helm_verion = include.dev.locals.argocd_helm_verion
   aws_ssm_key_name = "argocd-terraform-key"
   private_git_repo = "git@github.com:Mohit-Verma-1688/applications.git"
 }
