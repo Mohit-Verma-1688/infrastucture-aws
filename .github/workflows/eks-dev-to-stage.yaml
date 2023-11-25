@@ -74,8 +74,7 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
 
-    - name: Update the stage enviornment values as per dev
-      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
+
 
   #      - uses: the-commons-project/terragrunt-github-actions@master
   #        name: Terragrunt apply
@@ -110,6 +109,16 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.head_ref }}
+
+    - name: Update the stage enviornment values as per dev
+      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
+
+    - name: Commit the changes made to PR branch
+      run: |
+        git config --global user.name 'mohit-verma-1688'
+        git config --global user.email 'mohitverma160288@gmail.com'
+        git diff --exit-code || git commit -am "update to the stage env file from the workflow"
+        git push || echo "Nothing to commit"
 
 
     - name: Get changed files in the docs folder
