@@ -74,6 +74,9 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
 
+    - name: Update the stage enviornment values as per dev
+      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
+
   #      - uses: the-commons-project/terragrunt-github-actions@master
   #        name: Terragrunt apply
   #        with: 
@@ -83,6 +86,8 @@ jobs:
   #          tf_actions_subcommand: 'apply'
   #          tf_actions_comment: false
   #          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
+
+
 
   deploy_stage:
     environment: staging
@@ -105,9 +110,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: ${{ github.head_ref }}
-
-    - name: Update the stage enviornment values as per dev
-      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
 
 
     - name: Get changed files in the docs folder
