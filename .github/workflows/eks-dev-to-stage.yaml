@@ -94,10 +94,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        submodules: recursive # this is important not to forget
+        ref: ${{ github.head_ref }}
 
     - name: Update the stage enviornment values as per dev
       run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
@@ -109,12 +116,6 @@ jobs:
         git diff --exit-code || git commit -am "update to the env file from the workflow"
         git push || echo "Nothing to commit"
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.TF_AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
 
     - name: Get changed files in the docs folder
       id: changed-files-specific
