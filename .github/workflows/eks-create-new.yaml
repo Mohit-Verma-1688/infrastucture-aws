@@ -173,7 +173,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: steps.changed-files.outputs.src_any_changed == 'true'
+      if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
