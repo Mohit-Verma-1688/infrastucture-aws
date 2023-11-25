@@ -43,8 +43,7 @@ jobs:
       uses: tj-actions/changed-files@v40
       with:
         files: |
-          src:
-           - '_env/dev.hcl'
+          _env/dev.hcl
 
         # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
@@ -75,7 +74,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: steps.changed-files.outputs.src_any_changed == 'true'
+      if: steps.changed-files.outputs.all_changed_files == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
