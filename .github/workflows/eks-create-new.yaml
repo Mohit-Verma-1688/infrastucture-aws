@@ -39,12 +39,28 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - uses: dorny/paths-filter@v2
-      id: changes
+    - uses: actions/checkout@v4
       with:
-        filters: |
-          stage:
-            - '_env/dev.hcl'
+        fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
+
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v40
+
+      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+
+    - name: List all changed files
+      run: |
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          echo "$file was changed"
+        done
+
+    #- uses: dorny/paths-filter@v2
+    #  id: changes
+    #  with:
+    #    filters: |
+    #      stage:
+    #        - '_env/dev.hcl'
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
       if: ${{ steps.changes.outputs.dev == 'false' }}
@@ -112,13 +128,24 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v40
 
-    - uses: dorny/paths-filter@v2
-      id: changes
-      with:
-        filters: |
-          stage:
-              - '_env/stage.hcl'
+      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+
+    - name: List all changed files
+      run: |
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          echo "$file was changed"
+        done
+
+      # - uses: dorny/paths-filter@v2
+      #   id: changes
+      #   with:
+      #     filters: |
+      #       stage:
+      #           - '_env/stage.hcl'
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
