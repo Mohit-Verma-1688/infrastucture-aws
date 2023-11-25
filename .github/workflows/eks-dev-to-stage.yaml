@@ -109,15 +109,6 @@ jobs:
     - name: Update the stage enviornment values as per dev
       run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
 
-    - name: Commit the changes made
-      run: |
-        git config --global user.name 'mohit-verma-1688'
-        git config --global user.email 'mohitverma160288@gmail.com'
-        git diff --exit-code || git commit -am "update to the env file from the workflow"
-        git push || echo "Nothing to commit"
-
-    - name: Checkout
-      uses: actions/checkout@v3
 
     - name: Get changed files in the docs folder
       id: changed-files-specific
@@ -127,6 +118,7 @@ jobs:
         files_ignore: _env/dev.hcl
 
         # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+
 
     - name: List all changed files
       run: |
@@ -142,6 +134,13 @@ jobs:
       #     filters: |
       #       stage:
       #           - '_env/stage.hcl'
+
+    - name: Commit the changes made
+      run: |
+        git config --global user.name 'mohit-verma-1688'
+        git config --global user.email 'mohitverma160288@gmail.com'
+        git diff --exit-code || git commit -am "update to the env file from the workflow"
+        git push || echo "Nothing to commit"
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
