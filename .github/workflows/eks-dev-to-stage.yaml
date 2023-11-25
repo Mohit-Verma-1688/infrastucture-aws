@@ -108,7 +108,7 @@ jobs:
     - name: Checkout PR
       env:
           GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
-        run: gh pr checkout ${{ github.event.pull_request.number }}
+      run: gh pr checkout ${{ github.event.pull_request.number }}
 
     - name: Update the stage enviornment values as per dev
       run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
