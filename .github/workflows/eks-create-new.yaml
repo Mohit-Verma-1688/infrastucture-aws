@@ -44,7 +44,7 @@ jobs:
       with:
         files: |
           dev:
-           - '_env/dev.hcl'
+           - _env/dev.hcl
 
         # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
@@ -135,7 +135,7 @@ jobs:
       with:
         files: |
           stage:
-           - '_env/stage.hcl'
+           - _env/stage.hcl
 
         # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
