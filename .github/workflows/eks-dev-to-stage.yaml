@@ -119,7 +119,6 @@ jobs:
 
         # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
-
     - name: List all changed files
       run: |
         for file in ${{ steps.changed-files-specific.outputs.all_changed_files }}; do
@@ -134,13 +133,6 @@ jobs:
       #     filters: |
       #       stage:
       #           - '_env/stage.hcl'
-
-    - name: Commit the changes made
-      run: |
-        git config --global user.name 'mohit-verma-1688'
-        git config --global user.email 'mohitverma160288@gmail.com'
-        git diff --exit-code || git commit -am "update to the env file from the workflow"
-        git push || echo "Nothing to commit"
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
