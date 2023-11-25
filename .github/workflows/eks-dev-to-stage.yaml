@@ -101,7 +101,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Checkout
+    - name: Checkout the PR branch
       uses: actions/checkout@v3
       with:
         ref: ${{ github.head_ref }}
@@ -116,6 +116,8 @@ jobs:
         git diff --exit-code || git commit -am "update to the env file from the workflow"
         git push || echo "Nothing to commit"
 
+    - name: Checkout
+      uses: actions/checkout@v3
 
     - name: Get changed files in the docs folder
       id: changed-files-specific
