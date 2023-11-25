@@ -1,7 +1,7 @@
 locals {
     env = "stage"
 
-# hell again ichanging file for testing again .
+# hell 2  again ichanging file for testing again .
 #  make false for the component not to deploy during bootstraping. 
     
     aws-eks-addon = "false"
