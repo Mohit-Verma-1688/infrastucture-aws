@@ -113,10 +113,10 @@ jobs:
     - name: Update the stage enviornment values as per dev
       run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
 
-   - name: Push changes
-     env:
-      GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
-     run: git push
+    - name: Push changes
+      env:
+       GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
+      run: git push
 
 
     - name: Get changed files in the docs folder
