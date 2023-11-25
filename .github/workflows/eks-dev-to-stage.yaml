@@ -7,13 +7,6 @@ on:
     paths:
     - 'dev/**'
   workflow_dispatch:
-    inputs:
-      environment:
-        type: choice
-        description: Select an environment to continue
-        options:
-        - dev
-        - staging
 
 env:
   tf_version: 'latest'
