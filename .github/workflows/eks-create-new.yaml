@@ -109,10 +109,7 @@ jobs:
         submodules: recursive # this is important not to forget
 
     - name: Update the stage enviornment values as per dev
-      run: |
-        cd _env
-        cp dev.hcl stage.hcl
-        sed -i 's/"dev"/"stage"/g' stage.hcl
+      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
 
     - name: Commit the changes made
       run: |
