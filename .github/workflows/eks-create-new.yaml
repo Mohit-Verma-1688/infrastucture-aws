@@ -27,11 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        submodules: recursive # this is important not to forget
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -46,8 +41,12 @@ jobs:
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v40
+      with:
+        files: |
+          dev:
+           - '_env/dev.hcl'
 
-      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+        # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
     - name: List all changed files
       run: |
@@ -65,7 +64,7 @@ jobs:
     #        - '_env/dev.hcl'
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt init
-      if: ${{ steps.changes.outputs.dev == 'false' }}
+      if: steps.changed-files.outputs.dev_any_changed == 'false'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -76,7 +75,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: ${{ steps.changes.outputs.dev == 'true' }}
+      if: steps.changed-files.outputs.dev_any_changed == 'false'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -133,8 +132,12 @@ jobs:
     - name: Get changed files
       id: changed-files
       uses: tj-actions/changed-files@v40
+      with:
+        files: |
+          stage:
+           - '_env/stage.hcl'
 
-      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+        # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
     - name: List all changed files
       run: |
@@ -147,7 +150,7 @@ jobs:
       id: verify-changed-files
       with:
         files: |
-          **/stage.hcl
+          '_env/stage.hcl'
 
     - name: Run step only when any of the above files change.
       if: steps.verify-changed-files.outputs.files_changed == 'true'
@@ -175,7 +178,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: ${{ steps.changes.outputs.stage == 'true' }}
+      if: steps.changed-files.outputs.stage_any_changed == 'false'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}

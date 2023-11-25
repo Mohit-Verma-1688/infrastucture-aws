@@ -1,7 +1,7 @@
 locals {
     env = "dev"
 
-# agin changing file for testing again .
+# again changing file for testing again .
 #  make false for the component not to deploy during bootstraping. 
     
     aws-eks-addon = "false"
