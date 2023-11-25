@@ -38,18 +38,18 @@ jobs:
       with:
         fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
 
-    - name: Get changed files
-      id: changed-files
+    - name: Get changed files in the docs folder
+      id: changed-files-specific
       uses: tj-actions/changed-files@v40
       with:
-        files: |
-          _env/dev.hcl
-
-        # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+        files: _env/dev.hcl # Alternatively using: `docs/**`
+        files_ignore: _env/stage.hcl
 
     - name: List all changed files
+      # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
+
       run: |
-        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+        for file in ${{ steps.changed-files-specific.outputs.all_changed_files }}; do
           echo "$file was changed"
         done
 
@@ -74,7 +74,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: steps.changed-files.outputs.all_changed_files == 'true'
+      if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
