@@ -1,4 +1,4 @@
-name: Promote from Stage to Prod
+name: EKS promote from Stage to Prod
 
 on:
   workflow_dispatch:

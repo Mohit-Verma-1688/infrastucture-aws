@@ -1,11 +1,9 @@
-name: AWS-EKS-DEPLOY
+name: EKS changes promote from Dev to Stage
 
 on:
   pull_request:
     branches:
     - main
-    paths:
-    - 'dev/**'
   workflow_dispatch:
 
 env:
