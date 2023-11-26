@@ -215,7 +215,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'validate'
         tf_actions_comment: false
-        args: --terragrunt-working-dir ./staging
+        args: --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
 
     - name: Commit the changes made to PR branch
       run: |
