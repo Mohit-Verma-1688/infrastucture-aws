@@ -360,7 +360,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'apply'
         tf_actions_comment: false
-        args: --terragrunt-working-dir --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
+        args: --terragrunt-working-dir  ./staging/eks --terragrunt-non-interactive
 
 
     - uses: the-commons-project/terragrunt-github-actions@master
