@@ -55,7 +55,7 @@ jobs:
         tf_actions_subcommand: 'init'
         tf_actions_comment: false
         tf_actions_output: false
-        args: --terragrunt-working-dir ./dev
+        args: --terragrunt-working-dir ./dev/eks  --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
       id: plan
@@ -69,9 +69,21 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: validate
+      name: Terragrunt validate
+      if: steps.changed-files-specific.outputs.any_changed == 'true'
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'validate'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
+
     - id: validate_out
       if: always()
-      run: echo ${{ steps.plan.outputs.stdout }}
+      run: echo ${{ steps.validate.outputs.stdout }}
 
     - name: Update Pull Request
       uses: actions/github-script@v5
@@ -82,7 +94,7 @@ jobs:
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Initialization ⚙️\`${{ steps.plan.outcome }}\`
+          const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
           <details><summary>Show validate</summary>
@@ -105,6 +117,19 @@ jobs:
     - name: Terragrunt Validate Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
+
+    - name: 'Terraform Output'
+        id: terraform
+        uses: the-commons-project/terraform-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: 'output'
+          tf_actions_working_dir: ./dev/eks --terragrunt-non-interactive
+
+      - name: 'Use Terraform Output'
+        if: steps.terraform.outputs.tf_actions_output == 'true'
+        run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
 
 
 
