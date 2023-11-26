@@ -59,7 +59,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       id: plan
-      name: Terragrunt validate
+      name: Terragrunt plan
       if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
@@ -68,7 +68,7 @@ jobs:
         tf_actions_subcommand: 'plan'
         tf_actions_comment: false
         tf_actions_output: true
-        args: --terragrunt-working-dir ./dev/eks
+        args: --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
     - id: validate_out
       if: always()
