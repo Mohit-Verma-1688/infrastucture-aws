@@ -106,6 +106,10 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # OR "2" -> To retrieve the preceding commit.
+
 
     - name: Update the stage enviornment values as per dev
       run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
