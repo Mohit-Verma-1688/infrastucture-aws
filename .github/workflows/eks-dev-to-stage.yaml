@@ -118,6 +118,15 @@ jobs:
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
+    - name: 'Terraform Output to check if VPC is deployed or NOT'
+      id: terraform_vpc
+      uses: the-commons-project/terraform-github-actions@master
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_subcommand: 'output'
+        tf_actions_working_dir: ./dev/vpc --terragrunt-non-interactive
+
     - name: 'Terraform Output to check if EKS is deployed or NOT'
       id: terraform
       uses: the-commons-project/terraform-github-actions@master
@@ -133,7 +142,19 @@ jobs:
 
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      name: Terragrunt apply to create the EKS cluster if not deployed.
+      name: Terragrunt apply to create the VPC if not deployed.
+      if: steps.terraform_vpc.outputs.tf_actions_output != '{}'
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'apply'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir --terragrunt-working-dir ./dev/vpc --terragrunt-non-interactive
+
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt apply to create the EKS if not deployed.
       if: steps.terraform.outputs.tf_actions_output != '{}'
       with:
         tf_actions_version: ${{ env.tf_version }}
@@ -337,6 +358,16 @@ jobs:
       if: steps.plan_stage.outcome == 'failure'
       run: exit 1
 
+    - name: 'Terraform Output to check if VPC is deployed or NOT'
+      id: terraform_stage_vpc
+      uses: the-commons-project/terraform-github-actions@master
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_subcommand: 'output'
+        tf_actions_working_dir: ./staging/vpc --terragrunt-non-interactive
+
+
     - name: 'Terraform Output to check if EKS is deployed or NOT'
       id: terraform_stage
       uses: the-commons-project/terraform-github-actions@master
@@ -350,10 +381,21 @@ jobs:
       if: steps.terraform_stage.outputs.tf_actions_output == '{}'
       run: echo ${{ steps.terraform_stage.outputs.tf_actions_output  }}
 
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt apply to create the stage VPC  if not deployed.
+      if: steps.terraform_stage_vpc.outputs.tf_actions_output != '{}'
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'apply'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir  ./staging/vpc --terragrunt-non-interactive
+
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt apply to create the stage EKS cluster if not deployed.
-      if: steps.terraform.outputs.tf_actions_output != '{}'
+      if: steps.terraform_stage.outputs.tf_actions_output != '{}'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
