@@ -127,9 +127,9 @@ jobs:
           tf_actions_subcommand: 'output'
           tf_actions_working_dir: ./dev/eks --terragrunt-non-interactive
 
-      - name: 'Use Terraform Output'
-        if: steps.terraform.outputs.tf_actions_output == 'true'
-        run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
+    - name: 'Use Terraform Output'
+      if: steps.terraform.outputs.tf_actions_output == 'true'
+      run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
 
 
 
