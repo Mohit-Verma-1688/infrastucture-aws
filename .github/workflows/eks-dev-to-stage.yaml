@@ -69,8 +69,8 @@ jobs:
         args: --terragrunt-working-dir ./dev
 
     - id: validate_out
-              if: always()
-              run: echo ${{ steps.validate.outputs.stdout }}
+      if: always()
+      run: echo ${{ steps.validate.outputs.stdout }}
 
     - name: Update Pull Request
       uses: actions/github-script@v5
