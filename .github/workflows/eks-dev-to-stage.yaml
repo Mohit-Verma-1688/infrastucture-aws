@@ -54,40 +54,42 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'init'
         tf_actions_comment: false
+        tf_actions_output: false
         args: --terragrunt-working-dir ./dev
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: validate
+      id: plan
       name: Terragrunt validate
       if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
-        tf_actions_subcommand: 'validate'
+        tf_actions_subcommand: 'plan'
         tf_actions_comment: false
-        args: --terragrunt-working-dir ./dev
+        tf_actions_output: true
+        args: --terragrunt-working-dir ./dev/eks
 
     - id: validate_out
       if: always()
-      run: echo ${{ steps.validate.outputs.stdout }}
+      run: echo ${{ steps.plan.outputs.stdout }}
 
     - name: Update Pull Request
       uses: actions/github-script@v5
       env:
-        PLAN: "terraform\n${{ steps.validate.outputs.stdout }}"
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
         VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
         GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Initialization ⚙️\`${{ steps.validate.outcome }}\`
-          #### Terraform Plan 📖\`${{ steps.validate.outcome }}\`
+          const output = `#### Terraform Initialization ⚙️\`${{ steps.plan.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
           <details><summary>Show validate</summary>
 
           \`\`\`\n
-          ${process.env.VALIDATE}
+          ${process.env.PLAN}
           \`\`\`
 
           </details>
@@ -102,7 +104,7 @@ jobs:
           })
 
     - name: Terragrunt Validate Status
-      if: steps.validate.outcome == 'failure'
+      if: steps.plan.outcome == 'failure'
       run: exit 1
 
 
