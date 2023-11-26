@@ -68,10 +68,15 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
 
+    - id: validate_out
+              if: always()
+              run: echo ${{ steps.validate.outputs.stdout }}
+
     - name: Update Pull Request
       uses: actions/github-script@v5
       env:
         PLAN: "terraform\n${{ steps.validate.outputs.stdout }}"
+        VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
         GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
@@ -82,7 +87,7 @@ jobs:
           <details><summary>Show validate</summary>
 
           \`\`\`\n
-          ${process.env.PLAN}
+          ${process.env.VALIDATE}
           \`\`\`
 
           </details>
