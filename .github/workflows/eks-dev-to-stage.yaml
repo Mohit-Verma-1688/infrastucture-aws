@@ -119,9 +119,9 @@ jobs:
       run: exit 1
 
     - name: 'Terraform Output'
-        id: terraform
-        uses: the-commons-project/terraform-github-actions@master
-        with:
+      id: terraform
+      uses: the-commons-project/terraform-github-actions@master
+      with:
           tf_actions_version: ${{ env.tf_version }}
           tg_actions_version: ${{ env.tg_version }}
           tf_actions_subcommand: 'output'
