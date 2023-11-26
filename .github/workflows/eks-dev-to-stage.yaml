@@ -44,15 +44,8 @@ jobs:
           echo "$file was changed"
         done
 
-
-
-    #- uses: dorny/paths-filter@v2
-    #  id: changes
-    #  with:
-    #    filters: |
-    #      stage:
-    #        - '_env/dev.hcl'
     - uses: the-commons-project/terragrunt-github-actions@master
+      id: init
       name: Terragrunt init
       if: steps.changed-files.outputs.src_any_changed == 'false'
       with:
@@ -64,6 +57,7 @@ jobs:
         args: --terragrunt-working-dir ./dev
 
     - uses: the-commons-project/terragrunt-github-actions@master
+      id: validate
       name: Terragrunt validate
       if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
@@ -73,6 +67,38 @@ jobs:
         tf_actions_subcommand: 'validate'
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
+
+    - name: Update Pull Request
+      uses: actions/github-script@v5
+      env:
+        PLAN: "terraform\n${{ steps.validate.outputs.stdout }}"
+        GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+      with:
+        github-token: ${{ secrets.WF_GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Initialization ⚙️\`${{ steps.validate.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.validate.outcome }}\`
+
+          <details><summary>Show validate</summary>
+
+          \`\`\`\n
+          ${process.env.PLAN}
+          \`\`\`
+
+          </details>
+
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+          github.rest.issues.createComment({
+            issue_number: ${{github.event.pull_request.number}},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+    - name: Terragrunt Validate Status
+      if: steps.validate.outcome == 'failure'
+      run: exit 1
 
 
 
