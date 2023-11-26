@@ -74,6 +74,18 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
 
+    - name: Update the stage enviornment values as per dev
+      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
+
+
+
+    - name: Commit the changes made to PR branch
+      run: |
+        git config --global user.name 'mohit-verma-1688'
+        git config --global user.email 'mohitverma160288@gmail.com'
+        git diff --exit-code || git commit -am "update to the stage env file from the workflow"
+        git push origin main || echo "Nothing to commit"
+
 
 
   #      - uses: the-commons-project/terragrunt-github-actions@master
@@ -105,18 +117,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.TF_AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
 
-    - name: Checkout PR
-      env:
-          GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
-      run: gh pr checkout ${{ github.event.pull_request.number }}
 
-    - name: Update the stage enviornment values as per dev
-      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
 
-    - name: Push changes
-      env:
-       GITHUB_TOKEN: ${{ secrets.PRIVATEGIT_TOKEN }}
-      run: git push
+
 
 
     - name: Get changed files in the docs folder
