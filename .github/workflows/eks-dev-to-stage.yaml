@@ -178,6 +178,36 @@ jobs:
         tf_actions_comment: true
         args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
+    - name: Update Pull Request
+      if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      uses: actions/github-script@v5
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
+        GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+      with:
+        github-token: ${{ secrets.WF_GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Initialization Dev additional component ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Plan Dev additional component 📖\`${{ steps.plan.outcome }}\`
+
+          <details><summary>Show validate</summary>
+
+          \`\`\`\n
+          ${process.env.PLAN}
+          \`\`\`
+
+          </details>
+
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+          github.rest.issues.createComment({
+            issue_number: ${{github.event.pull_request.number}},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt apply for the additional components deploy
@@ -236,7 +266,7 @@ jobs:
     - uses: the-commons-project/terragrunt-github-actions@master
       id: init_stage
       name: Terragrunt init for the EKS cluster
-      if: steps.verify-changed-files.outputs.changed_files == 'false'
+      if: steps.verify-changed-files.outputs.changed_files == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -249,7 +279,7 @@ jobs:
     - uses: the-commons-project/terragrunt-github-actions@master
       id: plan_stage
       name: Terragrunt plan for the EKS cluster
-      if: steps.verify-changed-files.outputs.changed_files == 'false'
+      if: steps.verify-changed-files.outputs.changed_files == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -261,7 +291,7 @@ jobs:
     - uses: the-commons-project/terragrunt-github-actions@master
       id: validate_stage
       name: Terragrunt validate for the EKS cluster
-      if: steps.verify-changed-files.outputs.changed_files == 'false'
+      if: steps.verify-changed-files.outputs.changed_files == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -281,7 +311,7 @@ jobs:
         VALIDATE: "${{ steps.validate_out_stage.outputs.stdout }}"
         GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
       with:
-        github-token: ${{ secrets.WF_GITHUB_TOKEN }}
+        github-token: ${{ secrets.PRIVATEGIT_TOKEN}}
         script: |
           const output = `#### Terraform Initialization of stage env ⚙️\`${{ steps.init_stage.outcome }}\`
           #### Terraform Plan of stage env 📖\`${{ steps.plan_stage.outcome }}\`
@@ -334,7 +364,6 @@ jobs:
 
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: init
       name: Terragrunt init for the additional components
       if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform_stage.outputs.tf_actions_output != '{}' }}
       with:
