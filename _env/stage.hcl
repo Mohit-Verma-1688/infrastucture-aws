@@ -1,6 +1,6 @@
 locals {
 
-# testing the pull request18
+# testing the pull request20
 #  make false for the component not to deploy during bootstraping. 
     
     aws-eks-addon = "false"
