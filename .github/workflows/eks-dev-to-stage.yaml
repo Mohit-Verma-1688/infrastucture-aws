@@ -145,7 +145,6 @@ jobs:
 
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: init
       name: Terragrunt init the additional components
       if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
       with:
@@ -158,7 +157,6 @@ jobs:
         args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: plan
       name: Terragrunt plan for the addtional comoponents deploy
       if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
       with:
@@ -170,7 +168,6 @@ jobs:
         args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: validate
       name: Terragrunt validate for the additional components deploy
       if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
       with:
@@ -237,7 +234,7 @@ jobs:
 
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: init
+      id: init_stage
       name: Terragrunt init for the EKS cluster
       if: steps.verify-changed-files.outputs.changed_files == 'false'
       with:
@@ -250,7 +247,7 @@ jobs:
         args: --terragrunt-working-dir ./staging/eks  --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: plan
+      id: plan_stage
       name: Terragrunt plan for the EKS cluster
       if: steps.verify-changed-files.outputs.changed_files == 'false'
       with:
@@ -262,7 +259,7 @@ jobs:
         args: --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: validate
+      id: validate_stage
       name: Terragrunt validate for the EKS cluster
       if: steps.verify-changed-files.outputs.changed_files == 'false'
       with:
@@ -273,21 +270,21 @@ jobs:
         tf_actions_comment: true
         args: --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
 
-    - id: validate_out
+    - id: validate_out_stage
       if: always()
-      run: echo ${{ steps.validate.outputs.stdout }}
+      run: echo ${{ steps.validate_stage.outputs.stdout }}
 
     - name: Update Pull Request
       uses: actions/github-script@v5
       env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
+        PLAN: "terraform\n${{ steps.plan_stage.outputs.stdout }}"
+        VALIDATE: "${{ steps.validate_out_stage.outputs.stdout }}"
         GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Initialization of stage env ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Plan of stage env 📖\`${{ steps.plan.outcome }}\`
+          const output = `#### Terraform Initialization of stage env ⚙️\`${{ steps.init_stage.outcome }}\`
+          #### Terraform Plan of stage env 📖\`${{ steps.plan_stage.outcome }}\`
 
           <details><summary>Show validate</summary>
 
@@ -307,11 +304,11 @@ jobs:
           })
 
     - name: Terragrunt Validate stage Status
-      if: steps.plan.outcome == 'failure'
+      if: steps.plan_stage.outcome == 'failure'
       run: exit 1
 
     - name: 'Terraform Output to check if EKS is deployed or NOT'
-      id: terraform
+      id: terraform_stage
       uses: the-commons-project/terraform-github-actions@master
       with:
         tf_actions_version: ${{ env.tf_version }}
@@ -320,8 +317,8 @@ jobs:
         tf_actions_working_dir: ./staging/eks --terragrunt-non-interactive
 
     - name: 'Use Terraform Output'
-      if: steps.terraform.outputs.tf_actions_output == '{}'
-      run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
+      if: steps.terraform_stage.outputs.tf_actions_output == '{}'
+      run: echo ${{ steps.terraform_stage.outputs.tf_actions_output  }}
 
 
     - uses: the-commons-project/terragrunt-github-actions@master
@@ -339,7 +336,7 @@ jobs:
     - uses: the-commons-project/terragrunt-github-actions@master
       id: init
       name: Terragrunt init for the additional components
-      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform_stage.outputs.tf_actions_output != '{}' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -350,9 +347,8 @@ jobs:
         args: --terragrunt-working-dir ./staging --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: plan
       name: Terragrunt plan for the additional components
-      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform_stage.outputs.tf_actions_output != '{}' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -362,9 +358,8 @@ jobs:
         args: --terragrunt-working-dir ./staging --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      id: validate
       name: Terragrunt validate for the additional componenets
-      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform_stage.outputs.tf_actions_output != '{}' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -376,7 +371,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt apply for the additional comoponents
-      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform_stage.outputs.tf_actions_output != '{}' }}
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
