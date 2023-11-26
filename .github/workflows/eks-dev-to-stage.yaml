@@ -67,7 +67,6 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'plan'
         tf_actions_comment: false
-        tf_actions_output: true
         args: --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
     - id: validate_out
