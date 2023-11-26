@@ -122,13 +122,13 @@ jobs:
       id: terraform
       uses: the-commons-project/terraform-github-actions@master
       with:
-          tf_actions_version: ${{ env.tf_version }}
-          tg_actions_version: ${{ env.tg_version }}
-          tf_actions_subcommand: 'output'
-          tf_actions_working_dir: ./dev/eks --terragrunt-non-interactive
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_subcommand: 'output'
+        tf_actions_working_dir: ./dev/eks --terragrunt-non-interactive
 
     - name: 'Use Terraform Output'
-      if: steps.terraform.outputs.tf_actions_output == 'true'
+      if: steps.terraform.outputs.tf_actions_output == 'false'
       run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
 
 
