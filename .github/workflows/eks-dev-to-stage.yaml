@@ -74,17 +74,6 @@ jobs:
         tf_actions_comment: false
         args: --terragrunt-working-dir ./dev
 
-    - name: Update the stage enviornment values as per dev
-      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
-
-
-
-    - name: Commit the changes made to PR branch
-      run: |
-        git config --global user.name 'mohit-verma-1688'
-        git config --global user.email 'mohitverma160288@gmail.com'
-        git commit -am "update to the stage env file from the workflow"
-        git push origin main || echo "Nothing to commit"
 
 
 
@@ -118,26 +107,24 @@ jobs:
         aws-region: us-east-1
 
 
+    - name: Update the stage enviornment values as per dev
+      run: "cd _env\nif ! cmp -s dev.hcl stage.hcl ; \nthen cp dev.hcl stage.hcl \nfi\n  #magic___^_^___line\n  #magic___^_^___line\n"
 
 
-
-
-    - name: Get changed files in the docs folder
-      id: changed-files-specific
-      uses: tj-actions/changed-files@v40
+    - name: Verify Changed files
+      uses: tj-actions/verify-changed-files@v16
+      id: verify-changed-files
       with:
-        files: _env/stage.hcl # Alternatively using: `docs/**`
-        files_ignore: _env/dev.hcl
+        files: |
+          _env/stage.hcl
 
-        # NOTE: `since_last_remote_commit: true` is implied by default and falls back to the previous local commit.
 
-    - name: List all changed files
+    - name: Run step only when any of the above files change.
+      if: steps.verify-changed-files.outputs.files_changed == 'true'
       run: |
-        for file in ${{ steps.changed-files-specific.outputs.all_changed_files }}; do
-          echo "$file was changed"
-        done
-
+        echo "Changed files: ${{ steps.verify-changed-files.outputs.changed_files }}"
       # Outputs: "Changed files: new.txt test_directory/new.txt"
+
 
       # - uses: dorny/paths-filter@v2
       #   id: changes
@@ -159,7 +146,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       name: Terragrunt validate
-      if: steps.changed-files-specific.outputs.any_changed == 'true'
+      if: steps.verify-changed-files.outputs.files_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
@@ -167,6 +154,13 @@ jobs:
         tf_actions_subcommand: 'validate'
         tf_actions_comment: false
         args: --terragrunt-working-dir ./staging
+
+    - name: Commit the changes made to PR branch
+      run: |
+        git config --global user.name 'mohit-verma-1688'
+        git config --global user.email 'mohitverma160288@gmail.com'
+        git commit -am "update to the stage env file from the workflow"
+        git push  || echo "Nothing to commit"
 
 #      - uses: the-commons-project/terragrunt-github-actions@master
 #        name: Terragrunt apply
