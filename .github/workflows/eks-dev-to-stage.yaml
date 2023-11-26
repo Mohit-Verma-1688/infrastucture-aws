@@ -46,7 +46,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       id: init
-      name: Terragrunt init
+      name: Terragrunt init for the EKS cluster
       if: steps.changed-files.outputs.src_any_changed == 'false'
       with:
         tf_actions_version: ${{ env.tf_version }}
@@ -59,7 +59,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       id: plan
-      name: Terragrunt plan
+      name: Terragrunt plan for the EKS cluster
       if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
@@ -71,7 +71,7 @@ jobs:
 
     - uses: the-commons-project/terragrunt-github-actions@master
       id: validate
-      name: Terragrunt validate
+      name: Terragrunt validate for the EKS cluster
       if: steps.changed-files-specific.outputs.any_changed == 'true'
       with:
         tf_actions_version: ${{ env.tf_version }}
@@ -94,8 +94,8 @@ jobs:
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          const output = `#### Terraform Initialization Dev ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Plan Dev 📖\`${{ steps.plan.outcome }}\`
 
           <details><summary>Show validate</summary>
 
@@ -114,11 +114,11 @@ jobs:
             body: output
           })
 
-    - name: Terragrunt Validate Status
+    - name: Terragrunt Validate Dev Status
       if: steps.plan.outcome == 'failure'
       run: exit 1
 
-    - name: 'Terraform Output'
+    - name: 'Terraform Output to check if EKS is deployed or NOT'
       id: terraform
       uses: the-commons-project/terraform-github-actions@master
       with:
@@ -132,17 +132,66 @@ jobs:
       run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
 
 
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt apply to create the EKS cluster if not deployed.
+      if: steps.terraform.outputs.tf_actions_output != '{}'
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'apply'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
 
-  #      - uses: the-commons-project/terragrunt-github-actions@master
-  #        name: Terragrunt apply
-  #        with: 
-  #          tf_actions_version: ${{ env.tf_version }}
-  #          tg_actions_version: ${{ env.tg_version }}
-  #          tf_actions_binary: 'terragrunt run-all'
-  #          tf_actions_subcommand: 'apply'
-  #          tf_actions_comment: false
-  #          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: init
+      name: Terragrunt init the additional components
+      if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'init'
+        tf_actions_comment: false
+        tf_actions_output: false
+        args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: plan
+      name: Terragrunt plan for the addtional comoponents deploy
+      if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'plan'
+        tf_actions_comment: true
+        args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: validate
+      name: Terragrunt validate for the additional components deploy
+      if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'validate'
+        tf_actions_comment: true
+        args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
+
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt apply for the additional components deploy
+      if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'apply'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
 
 
@@ -185,53 +234,153 @@ jobs:
       if: steps.verify-changed-files.outputs.files_changed == 'true'
       run: |
         echo "Changed files: ${{ steps.verify-changed-files.outputs.changed_files }}"
-      # Outputs: "Changed files: new.txt test_directory/new.txt"
 
-
-      # - uses: dorny/paths-filter@v2
-      #   id: changes
-      #   with:
-      #     filters: |
-      #       stage:
-      #           - '_env/stage.hcl'
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      name: Terragrunt init
-      if: ${{ steps.changes.outputs.stage == 'false' }}
+      id: init
+      name: Terragrunt init for the EKS cluster
+      if: steps.verify-changed-files.outputs.changed_files == 'false'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'init'
         tf_actions_comment: false
-        args: --terragrunt-working-dir ./staging
+        tf_actions_output: false
+        args: --terragrunt-working-dir ./staging/eks  --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
-      name: Terragrunt validate
-      if: steps.verify-changed-files.outputs.files_changed == 'true'
+      id: plan
+      name: Terragrunt plan for the EKS cluster
+      if: steps.verify-changed-files.outputs.changed_files == 'false'
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'plan'
+        tf_actions_comment: true
+        args: --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: validate
+      name: Terragrunt validate for the EKS cluster
+      if: steps.verify-changed-files.outputs.changed_files == 'false'
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'validate'
-        tf_actions_comment: false
+        tf_actions_comment: true
         args: --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
 
-    - name: Commit the changes made to PR branch
-      run: |
-        git config --global user.name 'mohit-verma-1688'
-        git config --global user.email 'mohitverma160288@gmail.com'
-        git commit -am "update to the stage env file from the workflow"
-        git push  || echo "Nothing to commit"
+    - id: validate_out
+      if: always()
+      run: echo ${{ steps.validate.outputs.stdout }}
 
-#      - uses: the-commons-project/terragrunt-github-actions@master
-#        name: Terragrunt apply
-#        with: 
-#          tf_actions_version: ${{ env.tf_version }}
-#          tg_actions_version: ${{ env.tg_version }}
-#          tf_actions_binary: 'terragrunt run-all'
-#          tf_actions_subcommand: 'apply'
-#          tf_actions_comment: false
-#          args: --terragrunt-working-dir ${{ env.tf_working_dir  }} --terragrunt-non-interactive 
+    - name: Update Pull Request
+      uses: actions/github-script@v5
+      env:
+        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
+        GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
+      with:
+        github-token: ${{ secrets.WF_GITHUB_TOKEN }}
+        script: |
+          const output = `#### Terraform Initialization of stage env ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Plan of stage env 📖\`${{ steps.plan.outcome }}\`
+
+          <details><summary>Show validate</summary>
+
+          \`\`\`\n
+          ${process.env.PLAN}
+          \`\`\`
+
+          </details>
+
+          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+          github.rest.issues.createComment({
+            issue_number: ${{github.event.pull_request.number}},
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: output
+          })
+
+    - name: Terragrunt Validate stage Status
+      if: steps.plan.outcome == 'failure'
+      run: exit 1
+
+    - name: 'Terraform Output to check if EKS is deployed or NOT'
+      id: terraform
+      uses: the-commons-project/terraform-github-actions@master
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_subcommand: 'output'
+        tf_actions_working_dir: ./staging/eks --terragrunt-non-interactive
+
+    - name: 'Use Terraform Output'
+      if: steps.terraform.outputs.tf_actions_output == '{}'
+      run: echo ${{ steps.terraform.outputs.tf_actions_output  }}
 
 
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt apply to create the stage EKS cluster if not deployed.
+      if: steps.terraform.outputs.tf_actions_output != '{}'
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'apply'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir --terragrunt-working-dir ./staging/eks --terragrunt-non-interactive
+
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: init
+      name: Terragrunt init for the additional components
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'init'
+        tf_actions_comment: false
+        tf_actions_output: false
+        args: --terragrunt-working-dir ./staging --terragrunt-non-interactive
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: plan
+      name: Terragrunt plan for the additional components
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'plan'
+        tf_actions_comment: true
+        args: --terragrunt-working-dir ./staging --terragrunt-non-interactive
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      id: validate
+      name: Terragrunt validate for the additional componenets
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'validate'
+        tf_actions_comment: true
+        args: --terragrunt-working-dir ./staging --terragrunt-non-interactive
+
+
+    - uses: the-commons-project/terragrunt-github-actions@master
+      name: Terragrunt apply for the additional comoponents
+      if: ${{ steps.verify-changed-files.outputs.changed_files == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
+      with:
+        tf_actions_version: ${{ env.tf_version }}
+        tg_actions_version: ${{ env.tg_version }}
+        tf_actions_binary: 'terragrunt run-all'
+        tf_actions_subcommand: 'apply'
+        tf_actions_comment: false
+        args: --terragrunt-working-dir ./staging --terragrunt-non-interactive
