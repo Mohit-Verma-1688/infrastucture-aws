@@ -54,7 +54,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'init'
         tf_actions_comment: false
-        tf_actions_output: false
+        tf_actions_output: true
         args: --terragrunt-working-dir ./dev/eks  --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
@@ -67,6 +67,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'plan'
         tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
@@ -79,6 +80,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'validate'
         tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
     - id: validate_out
@@ -100,7 +102,7 @@ jobs:
           <details><summary>Show validate</summary>
 
           \`\`\`\n
-          ${process.env.VALIDATE}
+          ${{ steps.validate_output.outputs.stdout }}
           \`\`\`
 
           </details>
@@ -149,7 +151,8 @@ jobs:
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'apply'
-        tf_actions_comment: false
+        tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir --terragrunt-working-dir ./dev/vpc --terragrunt-non-interactive
 
 
@@ -161,7 +164,8 @@ jobs:
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'apply'
-        tf_actions_comment: false
+        tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir --terragrunt-working-dir ./dev/eks --terragrunt-non-interactive
 
 
@@ -173,8 +177,8 @@ jobs:
         tg_actions_version: ${{ env.tg_version }}
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'init'
-        tf_actions_comment: false
-        tf_actions_output: false
+        tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
@@ -186,6 +190,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'plan'
         tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
     - uses: the-commons-project/terragrunt-github-actions@master
@@ -197,6 +202,7 @@ jobs:
         tf_actions_binary: 'terragrunt run-all'
         tf_actions_subcommand: 'validate'
         tf_actions_comment: true
+        tf_actions_output: true
         args: --terragrunt-working-dir ./dev --terragrunt-non-interactive
 
     - name: Update Pull Request
