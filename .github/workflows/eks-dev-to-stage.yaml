@@ -88,8 +88,8 @@ jobs:
     - name: Update Pull Request
       uses: actions/github-script@v5
       env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
+        PLAN: "terraform\n${{ steps.plan.outputs.result }}"
+        VALIDATE: "${{ steps.validate_out.outputs.result }}"
         GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
@@ -203,8 +203,8 @@ jobs:
       if: ${{ steps.changed-files-specific.outputs.any_changed == 'true' && steps.terraform.outputs.tf_actions_output != '{}' }}
       uses: actions/github-script@v5
       env:
-        PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-        VALIDATE: "${{ steps.validate_out.outputs.stdout }}"
+        PLAN: "terraform\n${{ steps.plan.outputs.result }}"
+        VALIDATE: "${{ steps.validate_out.outputs.result }}"
         GITHUB_PR_NUMBER: ${{github.event.pull_request.number}}
       with:
         github-token: ${{ secrets.WF_GITHUB_TOKEN }}
