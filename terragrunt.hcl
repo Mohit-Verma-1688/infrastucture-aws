@@ -7,7 +7,7 @@ remote_state {
 
   config = {
 #    profile = "mohit"
-    role_arn = "arn:aws:iam::833192599359:role/terraform"
+    role_arn = "arn:aws:iam::8339359:role/terraform"
     bucket = "mvlab-terraform-state"
 
     key = "${path_relative_to_include()}/terraform.tfstate"
@@ -28,7 +28,7 @@ provider "aws" {
   
   assume_role {
     session_name = "devlab"
-    role_arn = "arn:aws:iam::833192599359:role/terraform"
+    role_arn = "arn:aws:iam::8339359:role/terraform"
   }
 }
 EOF

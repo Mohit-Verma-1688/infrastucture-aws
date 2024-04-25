@@ -5,6 +5,6 @@ provider "aws" {
   
   assume_role {
     session_name = "devlab"
-    role_arn = "arn:aws:iam::833192599359:role/terraform"
+    role_arn = "arn:aws:iam::8331359:role/terraform"
   }
 }
